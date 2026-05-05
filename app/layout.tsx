@@ -24,7 +24,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
         <script src="/dashboard-console-capture.js" />
-              <!-- cosmic-insights:auto-injected -->
         <script defer src="https://staging.cosmicinsights.dev/script.js" data-project="69fa366b0a8b0d6c3983031c"></script>
       </head>
       <body className="min-h-screen flex flex-col">
