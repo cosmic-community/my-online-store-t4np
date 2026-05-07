@@ -3,6 +3,7 @@ import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CosmicBadge from '@/components/CosmicBadge'
+import ChatWidget from '@/components/ChatWidget'
 
 export const metadata: Metadata = {
   title: 'My Online Store',
@@ -31,6 +32,7 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <CosmicBadge bucketSlug={bucketSlug} />
+        <ChatWidget />
       </body>
     </html>
   )
