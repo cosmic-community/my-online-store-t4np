@@ -118,6 +118,14 @@ export default function ChatWidget() {
     sendMessage(input)
   }
 
+  // Safe reference to the last message — avoids repeated possibly-undefined array access
+  const lastMsg: Message | undefined = messages[messages.length - 1]
+  const showQuickReplies =
+    !isTyping &&
+    lastMsg?.role === 'assistant' &&
+    lastMsg.quickReplies != null &&
+    lastMsg.quickReplies.length > 0
+
   return (
     <>
       {/* Chat toggle button */}
@@ -197,23 +205,20 @@ export default function ChatWidget() {
             ))}
 
             {/* Quick replies — shown below last assistant message */}
-            {messages.length > 0 &&
-              messages[messages.length - 1].role === 'assistant' &&
-              messages[messages.length - 1].quickReplies &&
-              !isTyping && (
-                <div className="flex flex-wrap gap-2 justify-start pl-1">
-                  {messages[messages.length - 1].quickReplies!.map((reply, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => sendMessage(reply)}
-                      className="text-xs px-3 py-1.5 rounded-full border font-medium transition-colors duration-150 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-700"
-                      style={{ borderColor: '#d1d5db', color: '#4b5563', background: '#fff' }}
-                    >
-                      {reply}
-                    </button>
-                  ))}
-                </div>
-              )}
+            {showQuickReplies && (
+              <div className="flex flex-wrap gap-2 justify-start pl-1">
+                {lastMsg!.quickReplies!.map((reply, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => sendMessage(reply)}
+                    className="text-xs px-3 py-1.5 rounded-full border font-medium transition-colors duration-150 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-700"
+                    style={{ borderColor: '#d1d5db', color: '#4b5563', background: '#fff' }}
+                  >
+                    {reply}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Typing indicator */}
             {isTyping && (

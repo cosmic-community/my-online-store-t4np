@@ -74,11 +74,7 @@ function parseInline(raw: string): InlineNode[] {
     // Plain text — consume until next special character
     let j = i + 1
     while (j < raw.length) {
-      if (
-        raw[j] === '*' ||
-        raw[j] === '[' ||
-        raw[j] === '!'
-      ) break
+      if (raw[j] === '*' || raw[j] === '[' || raw[j] === '!') break
       j++
     }
     nodes.push({ type: 'text', value: raw.slice(i, j) })
@@ -120,6 +116,8 @@ function renderInline(nodes: InlineNode[], keyPrefix: string): React.ReactNode[]
             loading="lazy"
           />
         )
+      default:
+        return null
     }
   })
 }
@@ -136,7 +134,8 @@ function parseBlocks(markdown: string): Block[] {
   let i = 0
 
   while (i < lines.length) {
-    const line = lines[i]
+    // Safe: i is bounds-checked by the while condition
+    const line = lines[i] as string
 
     // Skip blank lines
     if (line.trim() === '') {
@@ -154,8 +153,8 @@ function parseBlocks(markdown: string): Block[] {
     // Unordered list item: - item
     if (/^\s*[-*+]\s+/.test(line)) {
       const items: string[] = []
-      while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) {
-        items.push(lines[i].replace(/^\s*[-*+]\s+/, ''))
+      while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i] as string)) {
+        items.push((lines[i] as string).replace(/^\s*[-*+]\s+/, ''))
         i++
       }
       blocks.push({ type: 'ul', items })
@@ -165,8 +164,8 @@ function parseBlocks(markdown: string): Block[] {
     // Ordered list item: 1. item
     if (/^\s*\d+\.\s+/.test(line)) {
       const items: string[] = []
-      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
-        items.push(lines[i].replace(/^\s*\d+\.\s+/, ''))
+      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i] as string)) {
+        items.push((lines[i] as string).replace(/^\s*\d+\.\s+/, ''))
         i++
       }
       blocks.push({ type: 'ol', items })
@@ -219,15 +218,13 @@ export default function MarkdownRenderer({ content }: { content: string }) {
           case 'paragraph': {
             const inlineNodes = parseInline(block.raw)
             // If the only node is an image, render it without a <p> wrapper
-            if (
-              inlineNodes.length === 1 &&
-              inlineNodes[0].type === 'image'
-            ) {
+            const firstNode = inlineNodes[0]
+            if (inlineNodes.length === 1 && firstNode?.type === 'image') {
               return (
                 <img
                   key={key}
-                  src={inlineNodes[0].src}
-                  alt={inlineNodes[0].alt}
+                  src={firstNode.src}
+                  alt={firstNode.alt}
                   className="rounded-lg w-full object-cover my-2 max-h-48"
                   loading="lazy"
                 />
@@ -239,6 +236,9 @@ export default function MarkdownRenderer({ content }: { content: string }) {
               </p>
             )
           }
+
+          default:
+            return null
         }
       })}
     </div>
