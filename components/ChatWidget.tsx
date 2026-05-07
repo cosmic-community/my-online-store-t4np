@@ -7,8 +7,6 @@ interface Message {
   content: string
 }
 
-const AGENT_API_URL = 'https://dapi.cosmic-staging.com/v3/ai/agents/69fcf02e8f7654c5356c7402/messages'
-
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
@@ -39,11 +37,10 @@ export default function ChatWidget() {
     setLoading(true)
 
     try {
-      const res = await fetch(AGENT_API_URL, {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_ALEX_API_KEY}`,
         },
         body: JSON.stringify({
           messages: [...messages, userMessage].map((m) => ({
