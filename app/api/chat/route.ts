@@ -20,12 +20,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
+  const origin =
+    req.headers.get('origin') ||
+    (req.headers.get('host') ? `https://${req.headers.get('host')}` : '')
+
   try {
     const upstream = await fetch(AGENT_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${apiKey}`,
+        ...(origin ? { Origin: origin } : {}),
       },
       body: JSON.stringify(body),
     })
@@ -33,6 +38,11 @@ export async function POST(req: NextRequest) {
     const data = await upstream.json().catch(() => ({}))
 
     if (!upstream.ok) {
+      console.error('Alex upstream error', {
+        status: upstream.status,
+        data,
+        origin,
+      })
       return NextResponse.json(
         { error: 'Upstream request failed', status: upstream.status, data },
         { status: 502 }
@@ -41,6 +51,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(data)
   } catch (err) {
+    console.error('Alex proxy fetch threw', err)
     return NextResponse.json(
       { error: 'Failed to reach Alex agent' },
       { status: 502 }
