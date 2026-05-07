@@ -13,11 +13,22 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  let body: unknown
+  let body: { messages?: { role: string; content: string }[] }
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+  }
+
+  // The Alex API expects a single `message` string — extract the last user message
+  const messages = body?.messages ?? []
+  const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')
+
+  if (!lastUserMessage?.content?.trim()) {
+    return NextResponse.json(
+      { error: 'No user message found in request' },
+      { status: 400 }
+    )
   }
 
   const origin =
@@ -32,7 +43,7 @@ export async function POST(req: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
         ...(origin ? { Origin: origin } : {}),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ message: lastUserMessage.content }),
     })
 
     const data = await upstream.json().catch(() => ({}))
