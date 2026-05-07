@@ -8,6 +8,7 @@ interface Message {
 }
 
 const AGENT_API_URL = 'https://dapi.cosmic-staging.com/v3/ai/agents/69fcf02e8f7654c5356c7402/messages'
+const API_KEY = 'cos_vO4p6IhB4fpKlGcy1iQ8wF9twSGnPliqTmLjIriVcPD'
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
@@ -41,7 +42,10 @@ export default function ChatWidget() {
     try {
       const res = await fetch(AGENT_API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`,
+        },
         body: JSON.stringify({
           messages: [...messages, userMessage].map((m) => ({
             role: m.role,
