@@ -132,7 +132,7 @@ export default function ChatWidget() {
       <button
         onClick={() => setIsOpen(prev => !prev)}
         aria-label={isOpen ? 'Close chat' : 'Open Alex chat assistant'}
-        className="fixed bottom-5 left-5 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
+        className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
         style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}
       >
         {isOpen ? (
@@ -156,7 +156,7 @@ export default function ChatWidget() {
       {/* Chat panel */}
       {isOpen && (
         <div
-          className="fixed bottom-24 left-5 z-50 w-80 sm:w-96 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+          className="fixed bottom-24 right-5 z-50 w-80 sm:w-96 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           style={{ height: '520px', background: '#fff', border: '1px solid #e5e7eb' }}
           role="dialog"
           aria-label="Alex chat assistant"
